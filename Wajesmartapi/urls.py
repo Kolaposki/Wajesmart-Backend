@@ -21,7 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('books.api.urls')),
 
-
     re_path(r"^$", IndexTemplateView.as_view(), name="entry-point"),  # for serving base template for vue
 
 ]
