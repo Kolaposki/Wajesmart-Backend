@@ -20,8 +20,8 @@ class Author(models.Model):
 
 
 class Book(models.Model):
-    name = models.TextField()
-    isbn = models.TextField() # isbn is 13 + 4 hyphens/space making 17 ==> (978-3-16-148410-0)
+    name = models.TextField(null=False, blank=False)
+    isbn = models.TextField(null=False, blank=False) # isbn is 13 + 4 hyphens/space making 17 ==> (978-3-16-148410-0)
     author = models.ForeignKey(Author, related_name="author_books", on_delete=models.CASCADE)
     created_at = models.DateTimeField(null=True, auto_now_add=True)
     last_updated = models.DateTimeField(null=True, auto_now=True)
