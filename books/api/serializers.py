@@ -3,16 +3,19 @@ from rest_framework import serializers
 from books.models import Author, Book
 
 
-class BookSerializer(serializers.ModelSerializer):
-    author_name = serializers.ReadOnlyField()
-    author_id = serializers.ReadOnlyField()
+class AuthorSerializer(serializers.ModelSerializer):
+    full_name = serializers.ReadOnlyField()
+    created_at = serializers.ReadOnlyField()
+    last_updated = serializers.ReadOnlyField()
 
     class Meta:
-        model = Book
+        model = Author
         fields = "__all__"
 
 
-class AuthorSerializer(serializers.ModelSerializer):
+class BookSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer(read_only=True)  # nest author details
+
     class Meta:
-        model = Author
+        model = Book
         fields = "__all__"
