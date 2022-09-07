@@ -4,8 +4,8 @@ from books.models import Author, Book
 
 
 class BookSerializer(serializers.ModelSerializer):
-    author_id = serializers.IntegerField()
     author_name = serializers.ReadOnlyField()
+    author_id = serializers.ReadOnlyField()
 
     class Meta:
         model = Book
