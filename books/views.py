@@ -66,3 +66,26 @@ class BookView(APIView):
             print(e)
             return Response({"status": "error", "result": "An error occurred"}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
+    def put(self, request, pk):
+        book_name = request.data.get("name")
+
+        # check if book is present. So as to avoid duplicates
+        if Book.objects.filter(name=book_name).exists():
+            print("Duplicate Book")
+            return Response({"status": "error", "result": "Duplicate Book"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        book = get_object_or_404(Book.objects.all(), pk=pk)
+        serializer = BookSerializer(book, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"status": "success", "message": f"Book '{book.name}' updated successfully", "result": serializer.data})
+        else:
+            error_dict = {}
+            for field_name, field_errors in serializer.errors.items():
+                print(field_name, field_errors)
+                error_dict[field_name] = field_errors[0]
+            return Response({"status": "error", "result": error_dict}, status=status.HTTP_400_BAD_REQUEST)
+
+
