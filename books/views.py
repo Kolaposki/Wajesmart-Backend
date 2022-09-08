@@ -101,8 +101,13 @@ class AuthorView(APIView):
             serializer = AuthorSerializer(author)
             return Response({"author": serializer.data}, status=status.HTTP_200_OK)
 
-        author = Author.objects.all()
-        serializer = AuthorSerializer(author, many=True)  # return all authors
+        recent = request.query_params.get('recent') or None
+        if recent:
+            authors = Author.objects.all().order_by('-last_updated')[:3]  # 3 authors from the db sorted by last_updated
+        else:
+            authors = Author.objects.all()
+
+        serializer = AuthorSerializer(authors, many=True)  # return all authors
         return Response({"authors": serializer.data}, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -114,7 +119,7 @@ class AuthorView(APIView):
             # check if author name is present. So as to avoid duplicates
             if Author.objects.filter(last_name=last_name, first_name=first_name).exists():
                 print("Duplicate Author Name")
-                return Response({"status": "error", "result": "Duplicate Author Name"},
+                return Response({"status": "error", "result": "Duplicate Author"},
                                 status=status.HTTP_406_NOT_ACCEPTABLE)
 
             # Validate author data then save
