@@ -33,7 +33,12 @@ class BookView(APIView):
             return Response({"book": serializer.data}, status=status.HTTP_200_OK)
 
         # No PK provided
-        books = Book.objects.all()
+        recent = request.query_params.get('recent') or None
+        if recent:
+            books = Book.objects.all().order_by('-last_updated')[:5]  # 5 books from the db sorted by last_updated
+        else:
+            books = Book.objects.all()
+
         serializer = BookSerializer(books, many=True)  # return all books
         return Response({"books": serializer.data}, status=status.HTTP_200_OK)
 
@@ -109,7 +114,8 @@ class AuthorView(APIView):
             # check if author name is present. So as to avoid duplicates
             if Author.objects.filter(last_name=last_name, first_name=first_name).exists():
                 print("Duplicate Author Name")
-                return Response({"status": "error", "result": "Duplicate Author Name"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+                return Response({"status": "error", "result": "Duplicate Author Name"},
+                                status=status.HTTP_406_NOT_ACCEPTABLE)
 
             # Validate author data then save
             serializer = AuthorSerializer(data=request.data)
@@ -144,7 +150,8 @@ class AuthorView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {"status": "success", "message": f"Author '{author.full_name}' updated successfully", "result": serializer.data})
+                {"status": "success", "message": f"Author '{author.full_name}' updated successfully",
+                 "result": serializer.data})
         else:
             error_dict = {}
             for field_name, field_errors in serializer.errors.items():
