@@ -159,7 +159,12 @@ CORS_ORIGIN_WHITELIST = (
     'https://127.0.0.1:8080',
     'https://127.0.0.1:8000',
     'https://wajesmart-client.netlify.app',
+    'https://netlify.app',
 )
+CORS_ALLOWED_ORIGINS = [
+    'https://127.0.0.1:8080',
+    'https://wajesmart-client.netlify.app',
+]
 APPEND_SLASH = False
 trailing_slash = False
 django_heroku.settings(locals())

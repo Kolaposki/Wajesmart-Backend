@@ -13,6 +13,12 @@ Assessment
 [Vue.js Frontend](https://github.com/Kolaposki/Wajesmart-Frontend)
 
 
+
+### Heroku
+
+View live on [Heroku](https://github.com/wajesmart-api.herokuapp.com/)
+
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
