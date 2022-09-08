@@ -15,7 +15,7 @@ class Author(models.Model):
         return self.first_name + " " + self.last_name
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-last_updated']
         verbose_name_plural = "Authors"  # A human-readable name for the object, plural
         verbose_name = "Author"  # A human-readable name for the object, singular
 

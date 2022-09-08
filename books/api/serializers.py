@@ -15,6 +15,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 class BookSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)  # nest author details
+    author_id = serializers.IntegerField()
 
     class Meta:
         model = Book
