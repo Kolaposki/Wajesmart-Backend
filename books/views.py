@@ -1,23 +1,30 @@
+import sys
+
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
+from django.conf import settings
+
 from rest_framework.views import APIView
 from rest_framework import status
-
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from .models import Author, Book
-from .api.serializers import AuthorSerializer, BookSerializer
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
-from django.conf import settings
+
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
+from .models import Author, Book
+from .api.serializers import AuthorSerializer, BookSerializer
 
 
 # used in development for rendering vue template
 class IndexTemplateView(TemplateView):
+
     def get_template_names(self):
-        if settings.DEBUG:
+        RUNNING_DEVSERVER = (len(sys.argv) > 1 and sys.argv[1] == 'runserver' or sys.argv[1] == 'process_tasks')
+        print("IS RUNNING_DEVSERVER: ", RUNNING_DEVSERVER)
+        if settings.DEBUG and RUNNING_DEVSERVER:
             template_name = "index-dev.html"
         else:
             template_name = "index.html"
