@@ -10,9 +10,11 @@ from .models import Author, Book
 from .api.serializers import AuthorSerializer, BookSerializer
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.conf import settings
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
-#
+# used in development for rendering vue template
 class IndexTemplateView(TemplateView):
     def get_template_names(self):
         if settings.DEBUG:
@@ -42,6 +44,14 @@ class BookView(APIView):
         serializer = BookSerializer(books, many=True)  # return all books
         return Response({"books": serializer.data}, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'name': openapi.Schema(type=openapi.TYPE_STRING, description='Book Name'),
+            'isbn': openapi.Schema(type=openapi.TYPE_STRING, description='Book ISBN'),
+            'author_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Author ID'),
+        }),
+        responses={200: BookSerializer, 400: 'Bad Request'})  # for documentation
     def post(self, request):
         try:
 
@@ -71,6 +81,15 @@ class BookView(APIView):
             print(e)
             return Response({"status": "error", "result": "An error occurred"}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'name': openapi.Schema(type=openapi.TYPE_STRING, description='Book Name'),
+            'isbn': openapi.Schema(type=openapi.TYPE_STRING, description='Book ISBN'),
+            'pk': openapi.Schema(type=openapi.TYPE_INTEGER, description='Book ID'),
+            'author_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Author ID'),
+        }),
+        responses={200: BookSerializer, 400: 'Bad Request'})  # for documentation
     def put(self, request, pk):
         book_name = request.data.get("name")
 
@@ -110,6 +129,13 @@ class AuthorView(APIView):
         serializer = AuthorSerializer(authors, many=True)  # return all authors
         return Response({"authors": serializer.data}, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'first_name': openapi.Schema(type=openapi.TYPE_STRING, description='Author FirstName'),
+            'last_name': openapi.Schema(type=openapi.TYPE_STRING, description='Author LastName'),
+        }),
+        responses={200: AuthorSerializer, 400: 'Bad Request'})  # for documentation
     def post(self, request):
         try:
             print("request.data", request.data)
@@ -140,6 +166,15 @@ class AuthorView(APIView):
             print(e)
             return Response({"status": "error", "result": "An error occurred"}, status=status.HTTP_501_NOT_IMPLEMENTED)
 
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'first_name': openapi.Schema(type=openapi.TYPE_STRING, description='Author FirstName'),
+            'last_name': openapi.Schema(type=openapi.TYPE_STRING, description='Author LastName'),
+            'pk': openapi.Schema(type=openapi.TYPE_INTEGER, description='Author ID'),
+
+        }),
+        responses={200: AuthorSerializer, 400: 'Bad Request'})  # for documentation
     def put(self, request, pk):
         author = get_object_or_404(Author, pk=pk)
         serializer = AuthorSerializer(author, data=request.data, partial=True)

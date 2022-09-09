@@ -15,6 +15,7 @@ import os
 import django_heroku
 import dj_database_url
 from decouple import config, Csv
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = config('DEBUG', default=False, cast=bool)
 SECRET_KEY = config('SECRET_KEY')
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
-
-# SECURITY WARNING: don't run with debug turned on in production!
-
+RUNNING_DEVSERVER = (len(sys.argv) > 1 and sys.argv[1] == 'runserver' or sys.argv[1] == 'process_tasks')
+print("RUNNING_DEVSERVER: ", RUNNING_DEVSERVER)  # check if we are on development server and not in production server
 # ALLOWED_HOSTS = []
 
 # Application definition
@@ -40,9 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'books.apps.BooksConfig',
-    'rest_framework',
-    'webpack_loader',
-    "corsheaders",
+    'rest_framework',  # for generating api
+    'drf_yasg',  # for generating documentation using swagger
+    'webpack_loader',  # for webpack in development
+    "corsheaders",  # to prevent CORS errors
 ]
 
 MIDDLEWARE = [
@@ -140,18 +141,22 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
+
 FRONTEND_URL = config('FRONTEND_URL')
 
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'dist/',
-        'CACHE': not DEBUG,
-        'STATS_FILE': FRONTEND_URL + 'webpack-stats.json',  # TODO - set properly for production
-        'POLL_INTERVAL': 0.1,
-        'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+if DEBUG and RUNNING_DEVSERVER:
+    # webpack settings used in development
+    WEBPACK_LOADER = {
+        'DEFAULT': {
+            'BUNDLE_DIR_NAME': 'dist/',
+            'CACHE': not DEBUG,
+            'STATS_FILE': FRONTEND_URL + 'webpack-stats.json',
+            'POLL_INTERVAL': 0.1,
+            'IGNORE': [r'.+\.hot-update.js', r'.+\.map'],
+        }
     }
-}
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_ALLOW_ALL = True

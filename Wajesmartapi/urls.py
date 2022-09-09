@@ -16,11 +16,29 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from books.views import IndexTemplateView
+from rest_framework import permissions
+
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view as swagger_get_schema_view
+
+schema_view = swagger_get_schema_view(
+    openapi.Info(
+        title="Wajesmart API",
+        default_version='1.0.0',
+        description="API documentation of App",
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)  # for documentation
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('books.api.urls')),
-
+    path('api/',
+         include([
+             path('', include(('books.api.urls', 'post'), namespace='books')),
+             path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name="swagger-schema"),
+         ])
+         ),
     re_path(r"^$", IndexTemplateView.as_view(), name="entry-point"),  # for serving base template for vue
 
 ]
