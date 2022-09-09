@@ -2,9 +2,16 @@
 
 A backend implementation of Waje Smart Solutions Limited Full-Stack Developer Role Technical 
 Assessment
-## Authors
 
-* **Kolapo Oshodi**
+
+### Production
+
+View live on [Heroku](wajesmart-api.herokuapp.com/)
+
+
+### Documentation
+
+API documentation using swagger. View live on [Heroku](wajesmart-api.herokuapp.com/api/docs/)
 
 
 
@@ -13,10 +20,6 @@ Assessment
 [Vue.js Frontend](https://github.com/Kolaposki/Wajesmart-Frontend)
 
 
-
-### Heroku
-
-View live on [Heroku](https://github.com/wajesmart-api.herokuapp.com/)
 
 
 ## Contributing
